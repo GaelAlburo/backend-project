@@ -1,0 +1,3 @@
+venv/
+logger/__pycache__/
+atemporal_api.log
