@@ -1,3 +1,5 @@
 venv/
-logger/__pycache__/
+reviews_API/logger/__pycache__/
+reviews_API/models/__pycache__/
+reviews_API/services/__pycache__/
 atemporal_api.log
