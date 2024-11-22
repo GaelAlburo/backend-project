@@ -1,5 +1,5 @@
 import os
-from logger.logger_base import Logger
+from reviews_API.logger.logger_base import Logger
 from pymongo import MongoClient
 
 
