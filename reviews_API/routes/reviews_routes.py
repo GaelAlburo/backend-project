@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
+from flasgger import swag_from
 from reviews_API.logger.logger_base import Logger
 
 
@@ -21,6 +22,28 @@ class ReviewRoute(Blueprint):
             self.delete_review
         )
 
+    @swag_from(
+        {
+            "tags": ["reviews"],
+            "responses": {
+                200: {
+                    "description": "GET all reviews",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "user": {"type": "String"},
+                                "product": {"type": "String"},
+                                "review": {"type": "String"},
+                                "rating": {"type": "String"},
+                            },
+                        },
+                    },
+                }
+            },
+        }
+    )
     def get_reviews(self):
         reviews = self.review_service.get_all_reviews()
         return jsonify(reviews), 200
