@@ -13,8 +13,52 @@ class ReviewRoute(Blueprint):
 
     def register_routes(self):
         self.route("/api/v1/reviews", methods=["GET"])(self.get_reviews)
-        # self.route("/api/v1/reviews", methods=["POST"])(self.add_review)
+        self.route("/api/v1/reviews", methods=["POST"])(self.add_review)
 
     def get_reviews(self):
         reviews = self.review_service.get_all_reviews()
         return jsonify(reviews), 200
+
+    def fetch_request_data(self):
+        try:
+            request_data = request.json
+            if not request_data:
+                return jsonify({"error": "Invalid data"}), 400
+
+            user = request_data.get("user")
+            product = request_data.get("product")
+            review = request_data.get("review")
+            rating = request_data.get("rating")
+
+            return user, product, review, rating
+
+        except Exception as e:
+            self.logger.error(f"Error fetching the request data: {e}")
+            return jsonify({"error": f"Error fetching the request data: {e}"}), 500
+
+    def add_review(self):
+        try:
+            user, product, review, rating = self.fetch_request_data()
+
+            try:
+                self.review_schema.validates_user(user)
+                self.review_schema.validates_product(product)
+                self.review_schema.validates_review(review)
+                self.review_schema.validates_rating(rating)
+            except ValidationError as e:
+                return jsonify({"error": f"Invalid data: {e}"}), 400
+
+            new_review = {
+                "user": user,
+                "product": product,
+                "review": review,
+                "rating": rating,
+            }
+
+            created_review = self.review_service.add_review(new_review)
+            self.logger.info(f"Review added: {created_review}")
+            return jsonify(created_review), 201
+
+        except Exception as e:
+            self.logger.error(f"Error adding review: {e}")
+            return jsonify({"error": f"Error adding review: {e}"}), 500
