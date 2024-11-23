@@ -17,6 +17,9 @@ class ReviewRoute(Blueprint):
         self.route("/api/v1/reviews/<int:review_id>", methods=["PUT"])(
             self.update_review
         )
+        self.route("/api/v1/reviews/<int:review_id>", methods=["DELETE"])(
+            self.delete_review
+        )
 
     def get_reviews(self):
         reviews = self.review_service.get_all_reviews()
@@ -95,3 +98,15 @@ class ReviewRoute(Blueprint):
         except Exception as e:
             self.logger.error(f"Error updating review: {e}")
             return jsonify({"error": f"Error updating review: {e}"}), 500
+
+    def delete_review(self, review_id):
+        try:
+            deleted_review = self.review_service.delete_review(review_id)
+            if deleted_review:
+                return jsonify(deleted_review), 200
+            else:
+                return jsonify({"error": "Review not found"}), 404
+
+        except Exception as e:
+            self.logger.error(f"Error deleting review: {e}")
+            return jsonify({"error": f"Error deleting review: {e}"}), 500
