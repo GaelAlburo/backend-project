@@ -2,6 +2,7 @@ venv/
 reviews_API/logger/__pycache__/
 reviews_API/models/__pycache__/
 reviews_API/services/__pycache__/
-reviews_API/services/__pycache__/
+reviews_API/routes/__pycache__/
 reviews_API/__pycache__/
 atemporal_api.log
+atemporal_reviews_api.log
