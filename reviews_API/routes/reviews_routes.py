@@ -64,7 +64,9 @@ class ReviewRoute(Blueprint):
                 self.review_schema.validates_product(product)
                 self.review_schema.validates_review(review)
                 self.review_schema.validates_rating(rating)
+
             except ValidationError as e:
+                self.logger.error(f"Invalid data: {e}")
                 return jsonify({"error": f"Invalid data: {e}"}), 400
 
             return user, product, review, rating
@@ -73,6 +75,35 @@ class ReviewRoute(Blueprint):
             self.logger.error(f"Error fetching the request data: {e}")
             return jsonify({"error": f"Error fetching the request data: {e}"}), 500
 
+    @swag_from(
+        {
+            "tags": ["reviews"],
+            "parameters": [
+                {
+                    "name": "body",
+                    "in": "body",
+                    "required": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "user": {"type": "string"},
+                            "product": {"type": "string"},
+                            "review": {"type": "string"},
+                            "rating": {"type": "string"},
+                        },
+                        "required": ["user", "product", "review", "rating"],
+                    },
+                }
+            ],
+            "responses": {
+                201: {
+                    "description": "Review added successfully",
+                },
+                400: {"description": "Invalid data"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
     def add_review(self):
         try:
             user, product, review, rating = self.fetch_request_data()
@@ -106,8 +137,9 @@ class ReviewRoute(Blueprint):
 
             updated_review = self.review_service.update_review(review_id, update_review)
             if updated_review:
-                return jsonify(updated_review), 200
+                return jsonify(update_review), 200
             else:
+                self.logger.error(f"Review not found: {e}")
                 return jsonify({"error": "Review not found"}), 404
 
         except Exception as e:
