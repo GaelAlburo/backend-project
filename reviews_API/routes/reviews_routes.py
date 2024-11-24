@@ -180,6 +180,24 @@ class ReviewRoute(Blueprint):
             self.logger.error(f"Error updating review: {e}")
             return jsonify({"error": f"Error updating review: {e}"}), 500
 
+    @swag_from(
+        {
+            "tags": ["reviews"],
+            "parameters": [
+                {
+                    "name": "review_id",
+                    "in": "path",
+                    "required": True,
+                    "type": "integer",
+                }
+            ],
+            "responses": {
+                200: {"description": "Review deleted successfully"},
+                404: {"description": "Review not found"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
     def delete_review(self, review_id):
         try:
             deleted_review = self.review_service.delete_review(review_id)
