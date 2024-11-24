@@ -3,7 +3,7 @@ from reviews_API.logger.logger_base import Logger
 from pymongo import MongoClient
 
 
-class StoreModel:
+class ReviewModel:
     def __init__(self):
         self.client = None
         self.db = None
@@ -46,7 +46,7 @@ class StoreModel:
 
 
 if __name__ == "__main__":
-    db_conn = StoreModel()
+    db_conn = ReviewModel()
     logger = Logger()
 
     try:
