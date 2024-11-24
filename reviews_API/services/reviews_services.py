@@ -74,10 +74,10 @@ class ReviewService:
 
 
 if __name__ == "__main__":
-    from reviews_API.models.reviews_model import StoreModel
+    from reviews_API.models.reviews_model import ReviewModel
 
     logger = Logger()
-    db_conn = StoreModel()
+    db_conn = ReviewModel()
     product_service = ReviewService(db_conn)
 
     try:
@@ -101,9 +101,21 @@ if __name__ == "__main__":
         # )
         # logger.info(f"New review added: {new_review}")
 
+        # Update product
+        updated_review = product_service.update_review(
+            4,
+            {
+                "user": "Simon",
+                "product": "1",
+                "review": "This product is bad",
+                "rating": "2",
+            },
+        )
+        logger.info(f"Review updated: {updated_review}")
+
         # Delete product
-        deleted_review = product_service.delete_review(5)
-        logger.info(f"Review deleted: {deleted_review}")
+        # deleted_review = product_service.delete_review(5)
+        # logger.info(f"Review deleted: {deleted_review}")
 
     except Exception as e:
         logger.critical(f"Error ocurred: {e}")
