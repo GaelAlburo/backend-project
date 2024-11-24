@@ -123,6 +123,40 @@ class ReviewRoute(Blueprint):
             self.logger.error(f"Error adding review: {e}")
             return jsonify({"error": f"Error adding review: {e}"}), 500
 
+    @swag_from(
+        {
+            "tags": ["reviews"],
+            "parameters": [
+                {
+                    "name": "review_id",
+                    "in": "path",
+                    "required": True,
+                    "type": "integer",
+                },
+                {
+                    "name": "body",
+                    "in": "body",
+                    "required": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "user": {"type": "string"},
+                            "product": {"type": "string"},
+                            "review": {"type": "string"},
+                            "rating": {"type": "string"},
+                        },
+                        "required": ["user", "product", "review", "rating"],
+                    },
+                },
+            ],
+            "responses": {
+                200: {"description": "Review updated successfully"},
+                400: {"description": "Invalid data"},
+                404: {"description": "Review not found"},
+                500: {"description": "Internal server error"},
+            },
+        }
+    )
     def update_review(self, review_id):
         try:
             user, product, review, rating = self.fetch_request_data()
