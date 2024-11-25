@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
 from flasgger import swag_from
-from reviews_API.logger.logger_base import Logger
+from logger.logger_base import Logger
 
 
 class ReviewRoute(Blueprint):
@@ -25,6 +25,7 @@ class ReviewRoute(Blueprint):
         self.route("/api/v1/reviews/<int:review_id>", methods=["DELETE"])(
             self.delete_review
         )
+        self.route("/healthcheck", methods=["GET"])(self.healthcheck)
 
     # Swagger documentation for the GET request to /api/v1/reviews
     @swag_from(
@@ -185,6 +186,7 @@ class ReviewRoute(Blueprint):
 
             updated_review = self.review_service.update_review(review_id, update_review)
             if updated_review:
+                self.logger.info(f"Review updated: {updated_review}")
                 return jsonify(update_review), 200
             else:
                 self.logger.error("Review not found")
@@ -219,10 +221,17 @@ class ReviewRoute(Blueprint):
         try:
             deleted_review = self.review_service.delete_review(review_id)
             if deleted_review:
+                self.logger.info(f"Review deleted: {deleted_review}")
                 return jsonify(deleted_review), 200
             else:
+                self.logger.error("Review not found")
                 return jsonify({"error": "Review not found"}), 404
 
         except Exception as e:
             self.logger.error(f"Error deleting review: {e}")
             return jsonify({"error": f"Error deleting review: {e}"}), 500
+
+    def healthcheck(self):
+        """Function to check the health of the docker container"""
+
+        return jsonify({"status": "Up"}), 200

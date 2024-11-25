@@ -1,8 +1,8 @@
 from flask import Flask
-from reviews_API.models.reviews_model import ReviewModel
-from reviews_API.services.reviews_services import ReviewService
-from reviews_API.schemas.reviews_schemas import ReviewSchema
-from reviews_API.routes.reviews_routes import ReviewRoute
+from models.reviews_model import ReviewModel
+from services.reviews_services import ReviewService
+from schemas.reviews_schemas import ReviewSchema
+from routes.reviews_routes import ReviewRoute
 from flask_cors import CORS
 from flasgger import Swagger
 
