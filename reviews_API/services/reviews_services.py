@@ -1,5 +1,5 @@
 from flask import jsonify
-from reviews_API.logger.logger_base import Logger
+from logger.logger_base import Logger
 
 
 class ReviewService:
