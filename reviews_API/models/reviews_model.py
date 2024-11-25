@@ -50,16 +50,3 @@ class ReviewModel:
         if self.client:
             self.client.close()
             self.logger.info("MongoDB connection closed")
-
-
-if __name__ == "__main__":
-    db_conn = ReviewModel()
-    logger = Logger()
-
-    try:
-        db_conn.connect_to_database()
-    except Exception as e:
-        logger.critical(f"Error ocurred: {e}")
-    finally:
-        db_conn.close_connection()
-        logger.info("Connection closed successfully")

@@ -40,20 +40,3 @@ class ReviewSchema:
         # A rating must be between 1 and 5
         if int(value) < 1 or int(value) > 5:
             raise ValidationError("Rating must be between 1 and 5")
-
-
-if __name__ == "__main__":
-    from reviews_API.logger.logger_base import Logger
-
-    logger = Logger()
-    schema = ReviewSchema()
-    try:
-        schema.validates_user("Menta")
-        schema.validates_review(
-            "This is a review that has more than 10 characters and less than 280 characters"
-        )
-        schema.validates_product("2")
-        schema.validates_rating("5")
-        logger.info("All validations passed")
-    except ValidationError as e:
-        logger.error(f"An error has ocurred: {e}")

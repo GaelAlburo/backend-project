@@ -32,12 +32,3 @@ class Logger:
     def critical(self, message):
         """Log a message with severity 'CRITICAL' on the logger"""
         self.logger.critical(message, stacklevel=2)
-
-
-if __name__ == "__main__":
-    logger = Logger()
-    logger.debug("This is a debug message")
-    logger.info("This is an info message")
-    logger.warning("This is a warning message")
-    logger.error("This is an error message")
-    logger.critical("This is a critical message")
