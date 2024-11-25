@@ -25,6 +25,7 @@ class ReviewRoute(Blueprint):
         self.route("/api/v1/reviews/<int:review_id>", methods=["DELETE"])(
             self.delete_review
         )
+        self.route("/healthcheck", methods=["GET"])(self.healthcheck)
 
     # Swagger documentation for the GET request to /api/v1/reviews
     @swag_from(
@@ -226,3 +227,8 @@ class ReviewRoute(Blueprint):
         except Exception as e:
             self.logger.error(f"Error deleting review: {e}")
             return jsonify({"error": f"Error deleting review: {e}"}), 500
+
+    def healthcheck(self):
+        """Function to check the health of the docker container"""
+
+        return jsonify({"status": "Up"}), 200
