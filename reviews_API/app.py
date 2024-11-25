@@ -25,6 +25,7 @@ review_schema = ReviewSchema()
 # Routes
 review_routes = ReviewRoute(review_service, review_schema)
 
+# Register the blueprint to make the routes available in the app
 app.register_blueprint(review_routes)
 
 if __name__ == "__main__":

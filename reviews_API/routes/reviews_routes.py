@@ -5,6 +5,8 @@ from reviews_API.logger.logger_base import Logger
 
 
 class ReviewRoute(Blueprint):
+    """Class to handle the review routes"""
+
     def __init__(self, review_service, review_schema):
         super().__init__("review", __name__)
         self.logger = Logger()
@@ -13,6 +15,8 @@ class ReviewRoute(Blueprint):
         self.register_routes()
 
     def register_routes(self):
+        """Function to register the routes for the review service"""
+
         self.route("/api/v1/reviews", methods=["GET"])(self.get_reviews)
         self.route("/api/v1/reviews", methods=["POST"])(self.add_review)
         self.route("/api/v1/reviews/<int:review_id>", methods=["PUT"])(
@@ -22,6 +26,7 @@ class ReviewRoute(Blueprint):
             self.delete_review
         )
 
+    # Swagger documentation for the GET request to /api/v1/reviews
     @swag_from(
         {
             "tags": ["reviews"],
@@ -45,10 +50,13 @@ class ReviewRoute(Blueprint):
         }
     )
     def get_reviews(self):
+        """Function to fetch all reviews"""
         reviews = self.review_service.get_all_reviews()
         return jsonify(reviews), 200
 
     def fetch_request_data(self):
+        """Function to fetch the request data from the request body and validate it with the schema"""
+
         try:
             request_data = request.json
             if not request_data:
@@ -75,6 +83,7 @@ class ReviewRoute(Blueprint):
             self.logger.error(f"Error fetching the request data: {e}")
             return jsonify({"error": f"Error fetching the request data: {e}"}), 500
 
+    # Swagger documentation for the POST request to /api/v1/reviews
     @swag_from(
         {
             "tags": ["reviews"],
@@ -105,6 +114,8 @@ class ReviewRoute(Blueprint):
         }
     )
     def add_review(self):
+        """Function to add a review to the database"""
+
         try:
             user, product, review, rating = self.fetch_request_data()
 
@@ -123,6 +134,7 @@ class ReviewRoute(Blueprint):
             self.logger.error(f"Error adding review: {e}")
             return jsonify({"error": f"Error adding review: {e}"}), 500
 
+    # Swagger documentation for the PUT request to /api/v1/reviews/<review_id>
     @swag_from(
         {
             "tags": ["reviews"],
@@ -158,6 +170,8 @@ class ReviewRoute(Blueprint):
         }
     )
     def update_review(self, review_id):
+        """Function to update a review by its ID"""
+
         try:
             user, product, review, rating = self.fetch_request_data()
 
@@ -173,13 +187,14 @@ class ReviewRoute(Blueprint):
             if updated_review:
                 return jsonify(update_review), 200
             else:
-                self.logger.error(f"Review not found: {e}")
+                self.logger.error("Review not found")
                 return jsonify({"error": "Review not found"}), 404
 
         except Exception as e:
             self.logger.error(f"Error updating review: {e}")
             return jsonify({"error": f"Error updating review: {e}"}), 500
 
+    # Swagger documentation for the DELETE request to /api/v1/reviews/<review_id>
     @swag_from(
         {
             "tags": ["reviews"],
@@ -199,6 +214,8 @@ class ReviewRoute(Blueprint):
         }
     )
     def delete_review(self, review_id):
+        """Function to delete a review by its ID"""
+
         try:
             deleted_review = self.review_service.delete_review(review_id)
             if deleted_review:
