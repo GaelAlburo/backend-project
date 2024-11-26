@@ -85,94 +85,75 @@ class OrdersRoute(Blueprint):
 
     @swag_from(
         {
-            "tags": ["Orders"],
-            "summary": "Create a new order",
-            "description": "Add a new order to the database.",
-            "requestBody": {
-                "required": True,
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "customer_email": {
-                                    "type": "string",
-                                    "example": "customer@example.com",
-                                },
-                                "products": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "id": {"type": "string", "example": "1"},
-                                            "name": {
-                                                "type": "string",
-                                                "example": "Product 1",
-                                            },
-                                            "price": {
-                                                "type": "number",
-                                                "example": 10.5,
-                                            },
-                                            "quantity": {
-                                                "type": "integer",
-                                                "example": 2,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                            "required": ["customer_email", "products"],
-                        }
+            "tags": ["orders"],
+            "parameters": [
+                {
+                    "name": "body",
+                    "in": "body",
+                    "required": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "customer_email": {"type": "string", "example": "customer@example.com"},
+                            "products": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "string", "example": "1"},
+                                        "name": {"type": "string", "example": "Product A"},
+                                        "price": {"type": "number", "example": 10.5},
+                                        "quantity": {"type": "integer", "example": 2}
+                                    }
+                                }
+                            }
+                        },
+                        "required": ["customer_email", "products"]
                     }
-                },
-            },
+                }
+            ],
             "responses": {
                 201: {
                     "description": "Order created successfully",
-                    "content": {
-                        "application/json": {
-                            "example": {
-                                "order_id": "2",
-                                "customer_email": "customer@example.com",
-                                "products": [
-                                    {
-                                        "id": "1",
-                                        "name": "Product 1",
-                                        "price": 10.5,
-                                        "quantity": 2,
-                                    },
-                                    {
-                                        "id": "2",
-                                        "name": "Product 2",
-                                        "price": 20.0,
-                                        "quantity": 1,
-                                    },
-                                ],
-                                "total_price": 50.0,
-                                "created_at": "2023-11-25T20:40:00Z",
-                            }
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "order_id": {"type": "string", "example": "1"},
+                            "customer_email": {"type": "string", "example": "customer@example.com"},
+                            "products": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "string", "example": "1"},
+                                        "name": {"type": "string", "example": "Product A"},
+                                        "price": {"type": "number", "example": 10.5},
+                                        "quantity": {"type": "integer", "example": 2}
+                                    }
+                                }
+                            },
+                            "total_price": {"type": "number", "example": 50.0},
+                            "created_at": {"type": "string", "example": "2023-11-25T20:40:00Z"}
                         }
-                    },
+                    }
                 },
                 400: {
-                    "description": "Validation error",
-                    "content": {
-                        "application/json": {
-                            "example": {
-                                "error": {
-                                    "customer_email": ["Not a valid email address."]
-                                }
-                            }
+                    "description": "Invalid data",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "error": {"type": "string"}
                         }
-                    },
+                    }
                 },
                 500: {
                     "description": "Internal server error",
-                    "content": {
-                        "application/json": {
-                            "example": {"error": "Error adding order: <error_message>"}
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "error": {"type": "string"}
                         }
-                    },
+                    }
                 },
             },
         }
