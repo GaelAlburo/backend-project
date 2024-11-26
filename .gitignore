@@ -10,6 +10,11 @@ orders_API/models/__pycache__/
 orders_API/services/__pycache__/
 orders_API/routes/__pycache__/
 orders_API/schemas/__pycache__/
+products_API/logger/__pycache__/
+products_API/models/__pycache__/
+products_API/services/__pycache__/
+products_API/routes/__pycache__/
+products_API/schemas/__pycache__/
 orders_API/__pycache__/
 atemporal_api.log
 atemporal_reviews_api.log
