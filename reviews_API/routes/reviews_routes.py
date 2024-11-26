@@ -51,7 +51,8 @@ class ReviewRoute(Blueprint):
         }
     )
     def get_reviews(self):
-        """Function to fetch all reviews"""
+        """Fetches all the reviews"""
+
         reviews = self.review_service.get_all_reviews()
         return jsonify(reviews), 200
 
@@ -115,7 +116,7 @@ class ReviewRoute(Blueprint):
         }
     )
     def add_review(self):
-        """Function to add a review to the database"""
+        """Adds a new review"""
 
         try:
             user, product, review, rating = self.fetch_request_data()
@@ -171,7 +172,7 @@ class ReviewRoute(Blueprint):
         }
     )
     def update_review(self, review_id):
-        """Function to update a review by its ID"""
+        """Updates a review by its ID"""
 
         try:
             user, product, review, rating = self.fetch_request_data()
@@ -216,7 +217,7 @@ class ReviewRoute(Blueprint):
         }
     )
     def delete_review(self, review_id):
-        """Function to delete a review by its ID"""
+        """Deletes a review by its ID"""
 
         try:
             deleted_review = self.review_service.delete_review(review_id)
