@@ -1,9 +1,10 @@
 import logging as log
 
+
 class Logger:
     """Logger class to log messages with different severity levels"""
 
-    def __init__(self, log_file="payments.log", level=log.INFO):
+    def __init__(self, log_file="atemporal_payments_api.log", level=log.INFO):
         log.basicConfig(
             level=level,
             format="%(asctime)s: %(levelname)s [%(filename)s:%(lineno)s] %(message)s",
