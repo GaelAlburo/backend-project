@@ -83,14 +83,11 @@ class UserRoute(Blueprint):
                 return 500, "password param is required", None, None, None
             
             user_type = request_data.get("type")
-            if not user_type:
-                self.logger.error(f"Error: type param is required")
-                return 500, "type param is required", None, None, None
             
             try:
                 self.users_schema.validates_user(user_email)
                 self.users_schema.validates_password(user_password)
-                self.users_schema.validates_type(user_type)
+                # self.users_schema.validates_type(user_type)
             except ValidationError as e:
                 self.logger.error(f"Invalid user data: {e}")
                 return 400, f"Invalid user data: {e}", None, None, None
@@ -167,13 +164,6 @@ class UserRoute(Blueprint):
             # Get the hex digest of the hash
             hash_password = hash_object.hexdigest()
 
-            user = {
-                "email": user_email,
-                "password": hash_password,
-                "type": user_type,
-                "status": "active"
-            }
-
             user = self.user_service.get_users_by_user_email(user_email)
 
             if user == None:
@@ -184,7 +174,14 @@ class UserRoute(Blueprint):
                 return jsonify({"Error":"Please verify the data entered (email and password)."}), 500
 
             self.logger.info(f"Login user: {user}")
-            return jsonify({"status": "success"}), 201
+            return jsonify({
+                "status": "success", 
+                "user_info": {
+                    "_id": user['_id'],
+                    "email": user['email'],
+                    "type": user['type']
+                }
+            }), 201
 
         except Exception as e:
             self.logger.error(f"Error creating new user: {e}")
@@ -255,7 +252,7 @@ class UserRoute(Blueprint):
             
             if code != 200: 
                 self.logger.error(f"Error creating new user: {message}")
-                return jsonify({"error": f"Error creating new user: {message}"}), code
+                return jsonify({"Error": f"Error creating new user: {message}"}), code
 
             # Create a SHA-256 hash object
             hash_object = hashlib.sha256()
@@ -274,15 +271,15 @@ class UserRoute(Blueprint):
             response, code = self.user_service.create_new_user(new_user)
             
             if code != 201:
-                return jsonify({"error": f"Error creating new user: {response}"}), code
+                return jsonify({"Error": f"Error creating new user: {response}"}), code
 
             response['password'] = user_password
             self.logger.info(f"New User created: {response}")
-            return jsonify({"New User created": response}), 201
+            return jsonify({"status":"success", "New_user_created": response}), 201
 
         except Exception as e:
             self.logger.error(f"Error creating new user: {e}")
-            return jsonify({"error": f"Error creating new user: {e}"}), 500
+            return jsonify({"Error": f"Error creating new user: {e}"}), 500
 
     # Swagger documentation for the PUT request to /api/v1/user
     @swag_from(
@@ -383,14 +380,14 @@ class UserRoute(Blueprint):
             if updated_user:
                 update_user['password'] = user_password
                 self.logger.info(f"User updated: {update_user}")
-                return jsonify({"User updated": update_user}), 200
+                return jsonify({"status": "success","User updated": update_user}), 200
             else:
                 self.logger.error("User not found")
-                return jsonify({"error": "User not found"}), 404
+                return jsonify({"Error": "User not found"}), 404
 
         except Exception as e:
             self.logger.error(f"Error updating review: {e}")
-            return jsonify({"error": f"Error updating review: {e}"}), 500
+            return jsonify({"Error": f"Error updating review: {e}"}), 500
 
 
     # Swagger documentation for the DELETE request to /api/v1/user
@@ -460,11 +457,11 @@ class UserRoute(Blueprint):
                 return jsonify({"User deleted": deleted_user}), 200
             else:
                 self.logger.error("User not found")
-                return jsonify({"error": "User not found"}), 404
+                return jsonify({"Error": "User not found"}), 404
 
         except Exception as e:
             self.logger.error(f"Error deleting user: {e}")
-            return jsonify({"error": f"Error deleting user: {e}"}), 500
+            return jsonify({"Error": f"Error deleting user: {e}"}), 500
 
 
     def healthcheck(self):
