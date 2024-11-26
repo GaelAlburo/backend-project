@@ -1,3 +1,4 @@
+.DS_Store
 venv/
 reviews_API/logger/__pycache__/
 reviews_API/models/__pycache__/
