@@ -3,7 +3,10 @@ from marshmallow import ValidationError
 from flasgger import swag_from
 from logger.logger_pay import Logger
 
+
 class PaymentRoute(Blueprint):
+    """Class to handle the payment routes"""
+
     def __init__(self, payment_service, payment_schema):
         super().__init__("payment", __name__)
         self.logger = Logger()
@@ -12,11 +15,18 @@ class PaymentRoute(Blueprint):
         self.register_routes()
 
     def register_routes(self):
+        """Function to register the routes for the payment API"""
+
         self.route("/api/v1/payments", methods=["GET"])(self.get_payments)
         self.route("/api/v1/payments", methods=["POST"])(self.add_payment)
-        self.route("/api/v1/payments/<int:payment_id>", methods=["PUT"])(self.update_payment)
-        self.route("/api/v1/payments/<int:payment_id>", methods=["DELETE"])(self.delete_payment)
-    
+        self.route("/api/v1/payments/<int:payment_id>", methods=["PUT"])(
+            self.update_payment
+        )
+        self.route("/api/v1/payments/<int:payment_id>", methods=["DELETE"])(
+            self.delete_payment
+        )
+        self.route("/healthcheck", methods=["GET"])(self.healthcheck)
+
     @swag_from(
         {
             "tags": ["payments"],
@@ -28,7 +38,6 @@ class PaymentRoute(Blueprint):
                         "items": {
                             "type": "object",
                             "properties": {
-                                "id": {"type": "String"},
                                 "alias": {"type": "String"},
                                 "name": {"type": "String"},
                                 "number": {"type": "String"},
@@ -42,11 +51,12 @@ class PaymentRoute(Blueprint):
             },
         }
     )
-
     def get_payments(self):
+        """Fetch all payments from the database"""
+
         payments = self.payment_service.get_all_payments()
         return jsonify(payments), 200
-    
+
     def fetch_request_data(self):
         """Function to fetch the request data from the request body and validate it with the schema"""
 
@@ -55,7 +65,6 @@ class PaymentRoute(Blueprint):
             if not request_data:
                 return jsonify({"error": "Invalid data"}), 400
 
-            id = request_data.get("id")
             alias = request_data.get("alias")
             name = request_data.get("name")
             number = request_data.get("number")
@@ -64,21 +73,19 @@ class PaymentRoute(Blueprint):
             cvv = request_data.get("cvv")
 
             try:
-                self.review_schema.validates_id(id)
-                self.review_schema.validates_alias(alias)
-                self.review_schema.validates_name(name)
-                self.review_schema.validates_number(number)
-                self.review_schema.validates_month(month)
-                self.review_schema.validates_year(year)
-                self.review_schema.validates_cvv(cvv)
-                
+                self.payment_schema.validates_alias(alias)
+                self.payment_schema.validates_name(name)
+                self.payment_schema.validates_number(number)
+                self.payment_schema.validates_month(month)
+                self.payment_schema.validates_year(year)
+                self.payment_schema.validates_cvv(cvv)
 
             except ValidationError as e:
                 self.logger.error(f"Invalid data: {e}")
                 return jsonify({"error": f"Invalid data: {e}"}), 400
 
-            return id, alias, name, number, month, year, cvv
-        
+            return alias, name, number, month, year, cvv
+
         except Exception as e:
             self.logger.error(f"Error fetching the request data: {e}")
             return jsonify({"error": f"Error fetching the request data: {e}"}), 500
@@ -94,7 +101,6 @@ class PaymentRoute(Blueprint):
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "id": {"type": "String"},
                             "alias": {"type": "String"},
                             "name": {"type": "String"},
                             "number": {"type": "String"},
@@ -102,7 +108,14 @@ class PaymentRoute(Blueprint):
                             "year": {"type": "String"},
                             "cvv": {"type": "String"},
                         },
-                        "required": ["id", "alias", "name", "number", "month", "year", "cvv"],
+                        "required": [
+                            "alias",
+                            "name",
+                            "number",
+                            "month",
+                            "year",
+                            "cvv",
+                        ],
                     },
                 },
             ],
@@ -115,13 +128,11 @@ class PaymentRoute(Blueprint):
             },
         }
     )
-
     def add_payment(self):
-        """Function to add a payment to the database"""
+        """Adds a new payment to the database"""
         try:
-            id, alias, name, number, month, year, cvv = self.fetch_request_data()
+            alias, name, number, month, year, cvv = self.fetch_request_data()
             new_payment = {
-                "id": id,
                 "alias": alias,
                 "name": name,
                 "number": number,
@@ -135,7 +146,7 @@ class PaymentRoute(Blueprint):
         except Exception as e:
             self.logger.error(f"Error adding payment: {e}")
             return jsonify({"error": f"Error adding payment: {e}"}), 500
-    
+
     @swag_from(
         {
             "tags": ["payments"],
@@ -153,7 +164,6 @@ class PaymentRoute(Blueprint):
                     "schema": {
                         "type": "object",
                         "properties": {
-                            "id": {"type": "String"},
                             "alias": {"type": "String"},
                             "name": {"type": "String"},
                             "number": {"type": "String"},
@@ -161,12 +171,21 @@ class PaymentRoute(Blueprint):
                             "year": {"type": "String"},
                             "cvv": {"type": "String"},
                         },
-                        "required": ["id", "alias", "name", "number", "month", "year", "cvv"],
+                        "required": [
+                            "alias",
+                            "name",
+                            "number",
+                            "month",
+                            "year",
+                            "cvv",
+                        ],
                     },
-                }
+                },
             ],
             "responses": {
-                200: {"description": "Payment updated successfully",},
+                200: {
+                    "description": "Payment updated successfully",
+                },
                 400: {"description": "Invalid data"},
                 404: {"description": "Payment not found"},
                 500: {"description": "Internal server error"},
@@ -174,11 +193,11 @@ class PaymentRoute(Blueprint):
         }
     )
     def update_payment(self, payment_id):
+        """Updates a payment in the database"""
+
         try:
-            id, alias, name, number, month, year, cvv = self.fetch_request_data()
-            updated_payment = {
-                "_id": payment_id,
-                "id": id,
+            alias, name, number, month, year, cvv = self.fetch_request_data()
+            update_payment = {
                 "alias": alias,
                 "name": name,
                 "number": number,
@@ -186,16 +205,19 @@ class PaymentRoute(Blueprint):
                 "year": year,
                 "cvv": cvv,
             }
-            updated_payment = self.payment_service.update_payment(updated_payment)
+            updated_payment = self.payment_service.update_payment(
+                payment_id, update_payment
+            )
             if updated_payment:
                 self.logger.info(f"Payment updated: {updated_payment}")
-                return jsonify(updated_payment), 200
+                return jsonify(update_payment), 200
             else:
                 self.logger.error("Payment not found")
                 return jsonify({"error": "Payment not found"}), 404
         except Exception as e:
             self.logger.error(f"Error updating payment: {e}")
             return jsonify({"error": f"Error updating payment: {e}"}), 500
+
     @swag_from(
         {
             "tags": ["payments"],
@@ -208,13 +230,17 @@ class PaymentRoute(Blueprint):
                 }
             ],
             "responses": {
-                200: {"description": "Payment deleted successfully",},
+                200: {
+                    "description": "Payment deleted successfully",
+                },
                 404: {"description": "Payment not found"},
                 500: {"description": "Internal server error"},
             },
         }
     )
     def delete_payment(self, payment_id):
+        """Deletes a payment from the database"""
+
         try:
             deleted_payment = self.payment_service.delete_payment(payment_id)
             if deleted_payment:
@@ -226,3 +252,7 @@ class PaymentRoute(Blueprint):
         except Exception as e:
             self.logger.error(f"Error deleting payment: {e}")
             return jsonify({"error": f"Error deleting payment: {e}"}), 500
+
+    def healthcheck(self):
+        """Healthcheck endpoint for the payments API container"""
+        return jsonify({"status": "up"}), 200
