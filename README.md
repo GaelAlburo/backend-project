@@ -4,32 +4,21 @@ This project is the backend for the clothing store Atemporal, a web application 
 
 ---
 
-## **Table of Contents**
-1. [Installation](#installation)
-
----
-
 ## **Installation**
 
 ### **1. Clone the Repository**
 To get started, clone the repository to your local machine:
 ```bash
 git clone https://github.com/GaelAlburo/backend-project.git
+cd backend-project
 ```
 
-### **2. Set Up Virtual Environment**
+### **2. Start the application**
 ```bash
-# On Linux/macOS
-python3 -m venv venv
-source venv/bin/activate
-
-# On Windows
-python -m venv venv
-venv\Scripts\activate
+docker compose up -d
 ```
 
-### **3. Install Dependencies**
-Install the project’s dependencies listed in the `requirements.txt` file:
+### **3. Stopping the application**
 ```bash
-pip install -r requirements.txt
+docker compose down
 ```
