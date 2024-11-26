@@ -1,6 +1,7 @@
 from flask import jsonify
-from orders_APi.logger.logger_orders import Logger
+from logger.logger_orders import Logger
 from datetime import datetime, timezone
+
 
 class OrdersService:
     def __init__(self, db_conn):
@@ -8,6 +9,7 @@ class OrdersService:
         self.db_conn = db_conn
 
     """GET ALL"""
+
     def get_all_orders(self):
         try:
             orders = list(self.db_conn.db.orders.find())
@@ -20,6 +22,7 @@ class OrdersService:
             )
 
     """GET SEARCH"""
+
     def get_orders_by_id(self, orders_id):
         try:
             orders = self.db_conn.db.orders.find_one({"_id": orders_id})
@@ -32,9 +35,13 @@ class OrdersService:
             )
 
     """POST"""
+
     def add_order(self, new_order):
         try:
-            total_price = sum(product["price"] * product["quantity"] for product in new_order["products"])
+            total_price = sum(
+                product["price"] * product["quantity"]
+                for product in new_order["products"]
+            )
             new_order["total_price"] = total_price
 
             new_order["created_at"] = datetime.now(timezone.utc).isoformat()
@@ -50,6 +57,7 @@ class OrdersService:
             return jsonify({"error": f"Error adding orders to database: {e}"}), 500
 
     """PUT"""
+
     def update_order(self, orders_id, orders):
         try:
             update_orders = self.get_orders_by_id(orders_id)
@@ -69,6 +77,7 @@ class OrdersService:
             return jsonify({"error": f"Error updating orders in database: {e}"}), 500
 
     """PUT DELETE"""
+
     def delete_order(self, orders_id):
         try:
             deleted_orders = self.get_orders_by_id(orders_id)
@@ -81,6 +90,7 @@ class OrdersService:
         except Exception as e:
             self.logger.error(f"Error deleting orders from database: {e}")
             return jsonify({"error": f"Error deleting orders from database: {e}"}), 500
+
 
 """TEST"""
 if __name__ == "__main__":

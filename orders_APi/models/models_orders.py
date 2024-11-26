@@ -1,6 +1,7 @@
 import os
-from orders_APi.logger.logger_orders import Logger
+from logger.logger_orders import Logger
 from pymongo import MongoClient
+
 
 class OrdersModel:
     def __init__(self):
@@ -9,6 +10,7 @@ class OrdersModel:
         self.logger = Logger()
 
     """ENVIROMENT VARIABLES"""
+
     def connect_to_database(self):
         mongodb_user = os.environ.get("MONGODB_USER")
         mongodb_pass = os.environ.get("MONGODB_PASS")
@@ -19,7 +21,7 @@ class OrdersModel:
             raise ValueError(
                 "Set environment variables: MONGODB_USER, MONGODB_PASS, MONGODB_HOST"
             )
-        
+
         """CONECTION TO DATABASE"""
         try:
             self.client = MongoClient(
@@ -44,6 +46,7 @@ class OrdersModel:
         if self.client:
             self.client.close()
             self.logger.info("MongoDB connection closed")
+
 
 """TEST"""
 if __name__ == "__main__":
