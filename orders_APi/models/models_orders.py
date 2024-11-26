@@ -24,7 +24,7 @@ class OrdersModel:
         try:
             self.client = MongoClient(
                 host=mongodb_host,
-                port=37017,
+                port=27017,
                 username=mongodb_user,
                 password=mongodb_pass,
                 authSource="admin",

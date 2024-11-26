@@ -5,5 +5,13 @@ reviews_API/services/__pycache__/
 reviews_API/routes/__pycache__/
 reviews_API/schemas/__pycache__/
 reviews_API/__pycache__/
+orders_API/logger/__pycache__/
+orders_API/models/__pycache__/
+orders_API/services/__pycache__/
+orders_API/routes/__pycache__/
+orders_API/schemas/__pycache__/
+orders_API/__pycache__/
 atemporal_api.log
 atemporal_reviews_api.log
+atemporal_orders_api.log
+app.py
