@@ -1,0 +1,94 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - /opt/mongodb_test:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+  review_api:
+    build: ./reviews_API
+    image: review_api:v1.0.0
+    container_name: review_api
+    ports:
+      - "8000:8000"
+    environment:
+      MONGODB_USER: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGODB_PASS: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGODB_HOST: mongodb
+    depends_on:
+        - mongodb
+  product_api:
+    build: ./products_API
+    image: product_api:v1.0.0
+    container_name: product_api
+    ports:
+      - "8001:8000"
+    environment:
+      MONGODB_USER: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGODB_PASS: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGODB_HOST: mongodb
+    depends_on:
+        - mongodb
+  orders_api:
+    build: ./orders_API
+    image: orders_api:v1.0.0
+    container_name: orders_api
+    ports:
+      - "8002:8000"
+    environment:
+      MONGODB_USER: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGODB_PASS: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGODB_HOST: mongodb
+    depends_on:
+        - mongodb
+  categories_api:
+    build: ./categories_API
+    image: categories_api:v1.0.0
+    container_name: categories_api
+    ports:
+      - "8003:8000"
+    environment:
+      MONGODB_USER: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGODB_PASS: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGODB_HOST: mongodb
+    depends_on:
+        - mongodb
+  payments_api:
+    build: ./payments_API
+    image: payments_api:v1.0.0
+    container_name: payments_api
+    ports:
+      - "8004:8000"
+    environment:
+      MONGODB_USER: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGODB_PASS: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGODB_HOST: mongodb
+    depends_on:
+        - mongodb
+  users_api:
+    build: ./users_API
+    image: users_api:v1.0.0
+    container_name: users_api
+    ports:
+      - "8005:8000"
+    environment:
+      MONGODB_USER: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGODB_PASS: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGODB_HOST: mongodb
+    depends_on:
+        - mongodb
+  frontend:
+    build: ./first-project
+    image: atemporal-ui:v1.0.0
+    container_name: atemporal_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+        - review_api
+        - product_api
+        - orders_api
+        - categories_api
+        - payments_api
+        - users_api
