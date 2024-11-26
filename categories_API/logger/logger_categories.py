@@ -1,7 +1,9 @@
 import logging as log
 
+
 class Logger:
     """Logger class to log messages with different severity levels"""
+
     def __init__(self, log_file="atemporal_orders_api.log", level=log.INFO):
         log.basicConfig(
             level=level,
@@ -30,12 +32,3 @@ class Logger:
     def critical(self, message):
         """Log a message with severity 'CRITICAL' on the logger"""
         self.logger.critical(message, stacklevel=2)
-
-"""TEST"""
-if __name__ == "__main__":
-    logger = Logger()
-    logger.debug("This is a debug message")
-    logger.info("This is an info message")
-    logger.warning("This is a warning message")
-    logger.error("This is an error message")
-    logger.critical("This is a critical message")
