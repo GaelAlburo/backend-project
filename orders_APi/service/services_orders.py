@@ -1,5 +1,6 @@
 from flask import jsonify
 from orders_APi.logger.logger_orders import Logger
+from datetime import datetime, timezone
 
 class OrdersService:
     def __init__(self, db_conn):
@@ -33,6 +34,11 @@ class OrdersService:
     """POST"""
     def add_order(self, new_order):
         try:
+            total_price = sum(product["price"] * product["quantity"] for product in new_order["products"])
+            new_order["total_price"] = total_price
+
+            new_order["created_at"] = datetime.now(timezone.utc).isoformat()
+
             max_id = self.db_conn.db.orders.find_one(sort=[("_id", -1)])["_id"]
             next_id = max_id + 1
             new_order["_id"] = next_id
