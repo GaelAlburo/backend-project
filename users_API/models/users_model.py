@@ -3,9 +3,7 @@ from logger.logger_base import Logger
 from pymongo import MongoClient
 
 
-# Model class for reviews that allows to connect to MongoDB
-class ReviewModel:
-    """Model class for reviews that allows to connect to MongoDB"""
+class UserModel:
 
     def __init__(self):
         self.client = None
@@ -14,15 +12,24 @@ class ReviewModel:
 
     # Function to connect to MongoDB
     def connect_to_database(self):
-        """Function to connect to MongoDB"""
         mongodb_user = os.environ.get("MONGODB_USER")
         mongodb_pass = os.environ.get("MONGODB_PASS")
         mongodb_host = os.environ.get("MONGODB_HOST")
 
-        if not mongodb_user or not mongodb_pass or not mongodb_host:
+        if not mongodb_user:
             self.logger.critical("MongoDB environment variables are required")
             raise ValueError(
-                "Set environment variables: MONGODB_USER, MONGODB_PASS, MONGODB_HOST"
+                "Set environment variables: MONGODB_USER"
+            )
+        if not mongodb_pass:
+            self.logger.critical("MongoDB environment variables are required")
+            raise ValueError(
+                "Set environment variables: MONGODB_PASS"
+            )
+        if not mongodb_host:
+            self.logger.critical("MongoDB environment variables are required")
+            raise ValueError(
+                "Set environment variables: MONGODB_HOST"
             )
 
         try:
@@ -46,7 +53,6 @@ class ReviewModel:
 
     # Function to close the connection to MongoDB
     def close_connection(self):
-        """Function to close the connection to MongoDB"""
         if self.client:
             self.client.close()
             self.logger.info("MongoDB connection closed")

@@ -2,13 +2,12 @@ import logging as log
 
 
 class Logger:
-    """Logger class to log messages with different severity levels"""
 
-    def __init__(self, log_file="atemporal_reviews_api.log", level=log.INFO):
+    def __init__(self, log_file="atemporal_users_api.log", level=log.INFO):
         log.basicConfig(
             level=level,
             format="%(asctime)s: %(levelname)s [%(filename)s:%(lineno)s] %(message)s",
-            datefmt="%I:%M:%S %p",
+            datefmt="%Y-%m-%d %H:%M:%S",
             handlers=[log.StreamHandler(), log.FileHandler(log_file)],
         )
         self.logger = log.getLogger()
@@ -27,7 +26,7 @@ class Logger:
 
     def error(self, message):
         """Log a message with severity 'ERROR' on the logger"""
-        self.logger.error(message, stacklevel=2)
+        self.logger.error(message, stacklevel=1)
 
     def critical(self, message):
         """Log a message with severity 'CRITICAL' on the logger"""

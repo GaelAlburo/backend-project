@@ -1,11 +1,11 @@
 import os
-from logger.logger_base import Logger
+from logger.logger_categories import Logger
 from pymongo import MongoClient
 
 
-# Model class for reviews that allows to connect to MongoDB
-class ReviewModel:
-    """Model class for reviews that allows to connect to MongoDB"""
+# Model class for categories that allows to connect to MongoDB
+class CategoryModel:
+    """Model class for categories that allows to connect to MongoDB"""
 
     def __init__(self):
         self.client = None

@@ -1,10 +1,9 @@
 import os
-from logger.logger_base import Logger
+from logger.logger_pay import Logger
 from pymongo import MongoClient
 
-
 # Model class for reviews that allows to connect to MongoDB
-class ReviewModel:
+class PaymentModel:
     """Model class for reviews that allows to connect to MongoDB"""
 
     def __init__(self):

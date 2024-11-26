@@ -1,8 +1,8 @@
 from flask import Flask
-from models.reviews_model import ReviewModel
-from services.reviews_services import ReviewService
-from schemas.reviews_schemas import ReviewSchema
-from routes.reviews_routes import ReviewRoute
+from models.users_model import UserModel
+from services.users_services import UserService
+from schemas.users_schemas import UserSchema
+from routes.users_routes import UserRoute
 from flask_cors import CORS
 from flasgger import Swagger
 
@@ -13,20 +13,18 @@ CORS(app)
 swagger = Swagger(app)
 
 # Model
-db_conn = ReviewModel()
+db_conn = UserModel()
 db_conn.connect_to_database()
 
 # Service
-review_service = ReviewService(db_conn)
-
+user_service = UserService(db_conn)
 # Schema
-review_schema = ReviewSchema()
-
+user_schema = UserSchema()
 # Routes
-review_routes = ReviewRoute(review_service, review_schema)
+user_routes = UserRoute(user_service, user_schema)
 
 # Register the blueprint to make the routes available in the app
-app.register_blueprint(review_routes)
+app.register_blueprint(user_routes)
 
 if __name__ == "__main__":
     try:

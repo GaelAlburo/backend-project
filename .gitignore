@@ -14,4 +14,3 @@ orders_API/__pycache__/
 atemporal_api.log
 atemporal_reviews_api.log
 atemporal_orders_api.log
-app.py
