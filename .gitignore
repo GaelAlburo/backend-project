@@ -7,3 +7,4 @@ reviews_API/schemas/__pycache__/
 reviews_API/__pycache__/
 atemporal_api.log
 atemporal_reviews_api.log
+.DS_Store
